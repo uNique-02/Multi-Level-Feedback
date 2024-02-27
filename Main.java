@@ -2,6 +2,7 @@ import java.util.Scanner;
 import java.util.Random;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -9,20 +10,22 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
-    public static void main(String[] args) {
 
+    static String algos[] = {"First Come First Served", "Round-Robin", "Priority Scheduler"};
+
+    public static void main(String[] args) {
         initComponents();
     }
 
-        public static void initComponents() {
+    public static void initComponents() {
         JFrame frame = new JFrame("Process Table");
-        frame.setSize(500, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout(50, 10));
 
@@ -32,12 +35,12 @@ public class Main {
         DefaultTableModel model = new DefaultTableModel(data, columns);
         JTable table = new JTable(model);
 
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
-
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBounds(50, 20, 400, 200);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()));
         panel.add(scrollPane, BorderLayout.CENTER);
 
         JButton addProcess = new JButton("Add Process");
@@ -48,62 +51,72 @@ public class Main {
             }
         });
 
-        JButton run = new JButton("Run");
+        JComboBox algoBox = new JComboBox(algos); 
+        algoBox.setSelectedIndex(0);
+
+        JButton clrBtn = new JButton("Clear All");
+        JPanel btnPanel = new JPanel(new BorderLayout(20, 20));
+      
+
+        JButton runBtn = new JButton("Run");
+
+            GridBagLayout grid = new GridBagLayout();  
+            GridBagConstraints gbc = new GridBagConstraints();  
+            btnPanel.setLayout(grid);     
+            gbc.insets = new Insets(10, 10, 10, 10); 
+            gbc.fill = GridBagConstraints.HORIZONTAL;  
+            gbc.gridx = 0;  
+            gbc.gridy = 0;  
+            btnPanel.add(algoBox, gbc);  
+            gbc.gridx = 1;  
+            gbc.gridy = 0;  
+            btnPanel.add(clrBtn, gbc);  
+            gbc.gridx = 0;  
+            gbc.gridy = 2;  
+            gbc.fill = GridBagConstraints.HORIZONTAL;  
+            gbc.gridwidth = 2;  
+            btnPanel.add(runBtn, gbc);  
+
+        algoBox.setEditable(false);
+        btnPanel.setSize(frame.getWidth(), 50);
+
+        int paddingSize = 20; // Adjust as needed
+        btnPanel.setBorder(new EmptyBorder(paddingSize, paddingSize, paddingSize, paddingSize));
+
 
         panel.add(addProcess, BorderLayout.NORTH);
-        panel.add(run, BorderLayout.SOUTH);
 
-        JPanel showProcess = new JPanel();
+        JPanel showProcess = new JPanel( new BorderLayout());
+        showProcess.setBorder(BorderFactory.createTitledBorder("Show Process"));
         showProcess.setLayout(new BorderLayout());
-        showProcess.setSize(400, 200);
 
         // Create a panel to hold the boxes with FlowLayout
         JPanel boxPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10)); // 10 pixels gap
-        showProcess.add(boxPanel, BorderLayout.CENTER);
+
+        JScrollPane scrollPaneProcess = new JScrollPane(boxPanel);
+        scrollPaneProcess.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); // Ensure vertical scrollbar never appears
+
+        showProcess.add(scrollPaneProcess, BorderLayout.CENTER);
+
+        // Set preferred size for showProcess panel (optional)
+        showProcess.setPreferredSize(new Dimension(400, 100)); // Adjust size as needed
+
+
 
 
         /* ============================== Run ======================================================= */
 
-        run.addActionListener(new ActionListener() {
+        runBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             /* ========================================================================================== */
-
-            int delay = 1000; // Delay in milliseconds (1 second)
-            Timer timer = new Timer(delay, new ActionListener() {
-                private int i = 0, j=0, k=Integer.parseInt(model.getValueAt(j, 2).toString()); // Counter to track the number of boxes added
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (i < gettotalTime(model, delay)) {
-                        Random random = new Random();
-                        Color color = color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));;
-                        if(i>=k){
-                            j++;
-                            k = k+Integer.parseInt(model.getValueAt(j, 2).toString());
-                        }
-                        JPanel box = new JPanel();
-                        JLabel label = new JLabel("" + (j));
-                        box.setLayout(new BorderLayout());
-                        box.add(label, BorderLayout.CENTER);
-                        box.setPreferredSize(new Dimension(12, 30));
-                        box.setBorder(BorderFactory.createLineBorder(color));
-                        box.setBackground(color);
-                        boxPanel.add(box); // Add the box to the panel
-                        boxPanel.revalidate(); // Revalidate the panel to reflect the changes
-                        i++;
-                    } else {
-                        ((Timer) e.getSource()).stop(); // Stop the timer when all boxes are added
-                    }
-                }
-            });
-            timer.start(); // Start the timer
-
+                new FSCS (model, boxPanel);
 
         /* =========================================================================================== */
             }
         });
 
-
+        frame.add(btnPanel, BorderLayout.SOUTH);
         frame.add(panel, BorderLayout.NORTH);
         frame.add(showProcess, BorderLayout.CENTER);
         frame.pack();
@@ -119,19 +132,5 @@ public class Main {
         }
         // Add the new row to the table model
         model.addRow(rowData);
-    }
-
-    static int gettotalTime (DefaultTableModel model, int i){
-
-        System.out.println("Count: " + model.getRowCount());
-        int total = 0;
-        for (int row = 0; row < model.getRowCount(); row++) {
-            Object value = model.getValueAt(row, 2);
-            total += Integer.parseInt(value.toString());
-
-            System.err.println("Value: " + value.toString() + " Total: " + total);
-        }
-
-        return total;
     }
 }
