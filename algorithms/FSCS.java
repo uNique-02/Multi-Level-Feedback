@@ -1,3 +1,5 @@
+package algorithms;
+
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -11,14 +13,15 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import model.*;
 
 public class FSCS {
 
     DefaultTableModel model;
     JPanel boxPanel;
-    Process process[];
+    ProcessModel process[];
 
-    FSCS (DefaultTableModel model, JPanel boxPanel){
+    public FSCS (DefaultTableModel model, JPanel boxPanel){
         this.model = model;
         this.boxPanel = boxPanel;
         schedule();

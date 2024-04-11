@@ -15,10 +15,14 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import algorithms.*;
+import model.*;
 
 public class Main {
 
-    static String algos[] = {"First Come First Served", "Round-Robin", "Priority Scheduler"};
+    static String algos[] = {"First Come First Serve", "Shortest Job First", "Shortest Remaining Time First", "Round-Robin", "Priority Scheduler", ""};
+    static Util util = new Util();
+    static ProcessModel processes[];
 
     public static void main(String[] args) {
         initComponents();
@@ -60,22 +64,22 @@ public class Main {
 
         JButton runBtn = new JButton("Run");
 
-            GridBagLayout grid = new GridBagLayout();  
-            GridBagConstraints gbc = new GridBagConstraints();  
-            btnPanel.setLayout(grid);     
-            gbc.insets = new Insets(10, 10, 10, 10); 
-            gbc.fill = GridBagConstraints.HORIZONTAL;  
-            gbc.gridx = 0;  
-            gbc.gridy = 0;  
-            btnPanel.add(algoBox, gbc);  
-            gbc.gridx = 1;  
-            gbc.gridy = 0;  
-            btnPanel.add(clrBtn, gbc);  
-            gbc.gridx = 0;  
-            gbc.gridy = 2;  
-            gbc.fill = GridBagConstraints.HORIZONTAL;  
-            gbc.gridwidth = 2;  
-            btnPanel.add(runBtn, gbc);  
+        GridBagLayout grid = new GridBagLayout();  
+        GridBagConstraints gbc = new GridBagConstraints();  
+        btnPanel.setLayout(grid);     
+        gbc.insets = new Insets(10, 10, 10, 10); 
+        gbc.fill = GridBagConstraints.HORIZONTAL;  
+        gbc.gridx = 0;  
+        gbc.gridy = 0;  
+        btnPanel.add(algoBox, gbc);  
+        gbc.gridx = 1;  
+        gbc.gridy = 0;  
+        btnPanel.add(clrBtn, gbc);  
+        gbc.gridx = 0;  
+        gbc.gridy = 2;  
+        gbc.fill = GridBagConstraints.HORIZONTAL;  
+        gbc.gridwidth = 2;  
+        btnPanel.add(runBtn, gbc);  
 
         algoBox.setEditable(false);
         btnPanel.setSize(frame.getWidth(), 50);
@@ -110,6 +114,12 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
             /* ========================================================================================== */
+                Util util = new Util();
+                processes = util.createProcesses(model);
+                if(model.getRowCount() == 0) {
+                    util.enter_process(frame);
+                    return;
+                }
                 new FSCS (model, boxPanel);
 
         /* =========================================================================================== */
@@ -133,4 +143,6 @@ public class Main {
         // Add the new row to the table model
         model.addRow(rowData);
     }
+
+
 }
