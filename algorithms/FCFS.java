@@ -15,30 +15,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import model.*;
 
-public class FSCS {
-
-    DefaultTableModel model;
+public class FCFS {
     JPanel boxPanel;
     ProcessModel process[];
 
-    public FSCS (DefaultTableModel model, JPanel boxPanel){
-        this.model = model;
+    public FCFS (JPanel boxPanel, ProcessModel[] process) {
         this.boxPanel = boxPanel;
+        this.process = process;
         schedule();
     }
 
     void schedule(){
             int delay = 1000; // Delay in milliseconds (1 second)
             Timer timer = new Timer(delay, new ActionListener() {
-                private int i = 0, j=0, k=Integer.parseInt(model.getValueAt(j, 2).toString()); // Counter to track the number of boxes added
+                private int i = 0, j=0, k=process[j].getBurstTime(); // Counter to track the number of boxes added
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (i < gettotalTime(model, delay)) {
+                    System.out.println("Current k: " + k + " Current j: " + j);
+                    if (i < gettotalTime(delay)) {
                         Random random = new Random();
-                        Color color = color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));;
+                        Color color = color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
                         if(i>=k){
                             j++;
-                            k = k+Integer.parseInt(model.getValueAt(j, 2).toString());
+                            k = k+process[j].getBurstTime();
                         }
                         JPanel box = new JPanel();
                         JLabel label = new JLabel("" + (j));
@@ -57,11 +56,11 @@ public class FSCS {
             });
             timer.start(); // Start the timer
     }
-    static int gettotalTime (DefaultTableModel model, int i){
+    int gettotalTime (int i){
         int total = 0;
-        for (int row = 0; row < model.getRowCount(); row++) {
-            Object value = model.getValueAt(row, 2);
-            total += Integer.parseInt(value.toString());
+        for (int row = 0; row < process.length; row++) {
+            int value = process[row].getBurstTime();
+            total += value;
         }
 
         return total;

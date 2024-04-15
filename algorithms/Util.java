@@ -31,12 +31,13 @@ public class Util {
         this.model = model;
         ArrayList<ProcessModel> processes = new ArrayList<>();
         for (int i = 0; i < model.getRowCount(); i++) {
+            System.out.println("Row count: " + model.getRowCount());
             int id = Integer.parseInt((String) model.getValueAt(i, 0)); // Assuming the first column is for ID
             //int priority = Integer.parseInt((String) model.getValueAt(i, 1)); // Assuming the second column is for priority
             int arrivalTime = Integer.parseInt((String) model.getValueAt(i, 1)); // Assuming the third column is for arrival time
             int burstTime = Integer.parseInt((String) model.getValueAt(i, 2)); // Assuming the fourth column is for burst time
 
-            ProcessModel newProcess = new ProcessModel(id, 0, arrivalTime, burstTime);
+            ProcessModel newProcess = new ProcessModel(id, arrivalTime, burstTime, 0);
             processes.add(newProcess);
         }
         return processes.toArray(new ProcessModel[0]); // Convert ArrayList to array

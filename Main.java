@@ -120,7 +120,33 @@ public class Main {
                     util.enter_process(frame);
                     return;
                 }
-                new FSCS (model, boxPanel);
+                System.out.println("Selected " + algoBox.getSelectedIndex());
+
+                for(int i=0; i<processes.length; i++) {
+                    System.out.println(processes[i].getId());
+                    System.out.println(processes[i].getArrivalTime());
+                    System.out.println(processes[i].getBurstTime());
+                }
+                /* ========================================================================================== */
+                switch(algoBox.getSelectedIndex()){
+                    case 0:
+                        new FCFS (boxPanel, processes);
+                        break;
+                    case 1:
+                        new SJF (boxPanel, processes);
+                        break;
+                    case 2:
+                        new SRTF (boxPanel, processes);
+                        break;
+                    case 3:
+                        new RR (boxPanel, processes);
+                        break;
+                    case 4:
+                        new PS (boxPanel, processes);
+                        break;
+                    case 5:
+                        break;
+                }
 
         /* =========================================================================================== */
             }
