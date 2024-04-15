@@ -13,7 +13,6 @@ public class SRTF {
     public SRTF (DefaultTableModel model, JPanel boxPanel){
         this.model = model;
         this.boxPanel = boxPanel;
-        processes = util.createProcesses(model);
         schedule();
     }
 
