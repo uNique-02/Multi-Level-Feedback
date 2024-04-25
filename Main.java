@@ -9,29 +9,40 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.Timer;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+
 import algorithms.*;
 import model.*;
 
 public class Main {
-
-    static String algos[] = {"First Come First Serve", "Shortest Job First", "Shortest Remaining Time First", "Round-Robin", "Priority Scheduler", ""};
     static Util util = new Util();
     static ProcessModel processes[];
+    static JComboBox algoBox[];
+    static int selectedOption;
 
     public static void main(String[] args) {
         initComponents();
     }
 
+    public JComboBox createComboBox(String[] algos){
+
+        JComboBox algoBox = new JComboBox(algos); 
+        algoBox.setSelectedIndex(0);
+        return algoBox;
+    }
     public static void initComponents() {
         JFrame frame = new JFrame("Process Table");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new BorderLayout(50, 10));
+        frame.setLayout(new BorderLayout(20, 10));
 
         String[] columns = {"Process", "Arrival Time", "Burst Time"};
         Object[][] data = {};
@@ -55,36 +66,75 @@ public class Main {
             }
         });
 
-        JComboBox algoBox = new JComboBox(algos); 
-        algoBox.setSelectedIndex(0);
-
         JButton clrBtn = new JButton("Clear All");
         JPanel btnPanel = new JPanel(new BorderLayout(20, 20));
       
 
         JButton runBtn = new JButton("Run");
 
+        String[] queueOptions = {"1", "2", "3"};
+
+        // Create a JComboBox with the options array
+        JComboBox<String> numberofQueues = new JComboBox<>(queueOptions);
+        numberofQueues.setBorder(BorderFactory.createTitledBorder("Number of Queues"));
+
+        JButton okButton = new JButton("OK");
+
         GridBagLayout grid = new GridBagLayout();  
         GridBagConstraints gbc = new GridBagConstraints();  
         btnPanel.setLayout(grid);     
-        gbc.insets = new Insets(10, 10, 10, 10); 
+        gbc.insets = new Insets(5, 10, 5, 10); 
         gbc.fill = GridBagConstraints.HORIZONTAL;  
+
         gbc.gridx = 0;  
-        gbc.gridy = 0;  
-        btnPanel.add(algoBox, gbc);  
-        gbc.gridx = 1;  
-        gbc.gridy = 0;  
-        btnPanel.add(clrBtn, gbc);  
-        gbc.gridx = 0;  
-        gbc.gridy = 2;  
-        gbc.fill = GridBagConstraints.HORIZONTAL;  
+        gbc.gridy = 0;
         gbc.gridwidth = 2;  
+        
+        btnPanel.add(numberofQueues, gbc); 
+
+        numberofQueues.addActionListener(new ActionListener() {
+
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                selectedOption = Integer.parseInt(numberofQueues.getSelectedItem().toString());
+                System.out.println(selectedOption);
+
+                algoBox = new JComboBox[selectedOption];
+
+                while(selectedOption > 0) {
+                    algoBox[selectedOption-1] = util.createBox();
+                    gbc.gridx = 0;  
+                    gbc.gridy = selectedOption;  
+                    btnPanel.add(algoBox[selectedOption-1], gbc); 
+                    selectedOption--; 
+                    btnPanel.revalidate();
+                    btnPanel.repaint();
+
+                    System.out.println("kim");
+                }
+            }
+        });
+        
+        gbc.gridx = 3;  
+        gbc.gridy = 0;  
+        btnPanel.add(okButton, gbc);
+        
+        gbc.gridx = 0;  
+        gbc.gridy = selectedOption+6;  
+        gbc.gridwidth = 2; 
+        btnPanel.add(clrBtn, gbc);  
+
+        gbc.gridx = 2;  
+        gbc.gridy = selectedOption+6;   
+        gbc.gridwidth = 1;  
         btnPanel.add(runBtn, gbc);  
 
-        algoBox.setEditable(false);
+
         btnPanel.setSize(frame.getWidth(), 50);
 
-        int paddingSize = 20; // Adjust as needed
+        int paddingSize = 10; // Adjust as needed
         btnPanel.setBorder(new EmptyBorder(paddingSize, paddingSize, paddingSize, paddingSize));
 
 
@@ -103,7 +153,7 @@ public class Main {
         showProcess.add(scrollPaneProcess, BorderLayout.CENTER);
 
         // Set preferred size for showProcess panel (optional)
-        showProcess.setPreferredSize(new Dimension(400, 100)); // Adjust size as needed
+        showProcess.setPreferredSize(new Dimension(400, 200)); // Adjust size as needed
 
 
 
@@ -120,7 +170,7 @@ public class Main {
                     util.enter_process(frame);
                     return;
                 }
-                System.out.println("Selected " + algoBox.getSelectedIndex());
+                System.out.println("Selected " + algoBox[0].getSelectedIndex());
 
                 for(int i=0; i<processes.length; i++) {
                     System.out.println(processes[i].getId());
@@ -128,7 +178,11 @@ public class Main {
                     System.out.println(processes[i].getBurstTime());
                 }
                 /* ========================================================================================== */
-                switch(algoBox.getSelectedIndex()){
+                boxPanel.removeAll();
+                boxPanel.revalidate();
+                boxPanel.repaint();
+
+                switch(algoBox[0].getSelectedIndex()){
                     case 0:
                         new FCFS (boxPanel, processes);
                         break;
@@ -152,9 +206,10 @@ public class Main {
             }
         });
 
-        frame.add(btnPanel, BorderLayout.SOUTH);
+
         frame.add(panel, BorderLayout.NORTH);
         frame.add(showProcess, BorderLayout.CENTER);
+        frame.add(btnPanel, BorderLayout.SOUTH);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

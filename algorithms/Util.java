@@ -1,5 +1,6 @@
 package algorithms;
 
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,5 +42,14 @@ public class Util {
             processes.add(newProcess);
         }
         return processes.toArray(new ProcessModel[0]); // Convert ArrayList to array
+    }
+
+    public JComboBox createBox(){
+        final String algos[] = {"First Come First Serve", "Shortest Job First", "Shortest Remaining Time First", "Round-Robin", "Priority Scheduler", ""};
+
+        JComboBox algoBox = new JComboBox(algos); 
+        algoBox.setSelectedIndex(0);
+        algoBox.setEditable(false);
+        return algoBox;
     }
 }

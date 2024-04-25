@@ -40,7 +40,7 @@ public class FCFS {
                             k = k+process[j].getBurstTime();
                         }
                         JPanel box = new JPanel();
-                        JLabel label = new JLabel("" + (j));
+                        JLabel label = new JLabel("" + (process[j].getId()));
                         box.setLayout(new BorderLayout());
                         box.add(label, BorderLayout.CENTER);
                         box.setPreferredSize(new Dimension(12, 30));
