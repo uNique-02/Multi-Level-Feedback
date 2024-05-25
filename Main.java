@@ -1,24 +1,11 @@
-import java.util.Scanner;
-import java.util.Random;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.Timer;
-import javax.swing.border.Border;
+import java.util.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 import algorithms.*;
 import model.*;
@@ -28,6 +15,8 @@ public class Main {
     static ProcessModel processes[];
     static JComboBox algoBox[];
     static int selectedOption;
+    static ArrayList<JComboBox> comboBoxesList = new ArrayList<>(); // List to track JComboBoxes
+
 
     public static void main(String[] args) {
         initComponents();
@@ -76,9 +65,7 @@ public class Main {
 
         // Create a JComboBox with the options array
         JComboBox<String> numberofQueues = new JComboBox<>(queueOptions);
-        numberofQueues.setBorder(BorderFactory.createTitledBorder("Number of Queues"));
-
-        JButton okButton = new JButton("OK");
+        numberofQueues.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0,10,10,10), "Number of Queues"));
 
         GridBagLayout grid = new GridBagLayout();  
         GridBagConstraints gbc = new GridBagConstraints();  
@@ -88,38 +75,36 @@ public class Main {
 
         gbc.gridx = 0;  
         gbc.gridy = 0;
-        gbc.gridwidth = 2;  
-        
-        btnPanel.add(numberofQueues, gbc); 
+        gbc.gridwidth = 3;  
+        btnPanel.add(numberofQueues, gbc);
 
-        numberofQueues.addActionListener(new ActionListener() {
+         // ActionListener for numberofQueues
+         numberofQueues.addActionListener(e -> {
+            selectedOption = Integer.parseInt(numberofQueues.getSelectedItem().toString());
+            System.out.println("Selected number of queues: " + selectedOption);
 
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                selectedOption = Integer.parseInt(numberofQueues.getSelectedItem().toString());
-                System.out.println(selectedOption);
-
-                algoBox = new JComboBox[selectedOption];
-
-                while(selectedOption > 0) {
-                    algoBox[selectedOption-1] = util.createBox();
-                    gbc.gridx = 0;  
-                    gbc.gridy = selectedOption;  
-                    btnPanel.add(algoBox[selectedOption-1], gbc); 
-                    selectedOption--; 
-                    btnPanel.revalidate();
-                    btnPanel.repaint();
-
-                    System.out.println("kim");
-                }
+            // Remove all comboBoxes from the panel and list
+            for (JComboBox box : comboBoxesList) {
+                btnPanel.remove(box);
             }
+            comboBoxesList.clear(); // Clear the list of comboBoxes
+
+            // Add new comboBoxes based on the selected option
+            algoBox = new JComboBox[selectedOption];
+            for (int i = 0; i < selectedOption; i++) {
+                algoBox[i] = util.createBox();
+                comboBoxesList.add(algoBox[i]);
+                
+                gbc.gridx = 0;
+                gbc.gridy = i + 1; // Adjust y position based on index
+                btnPanel.add(algoBox[i], gbc);
+            }
+
+            // Revalidate and repaint the panel
+            btnPanel.revalidate();
+            btnPanel.repaint();
         });
-        
-        gbc.gridx = 3;  
-        gbc.gridy = 0;  
-        btnPanel.add(okButton, gbc);
+
         
         gbc.gridx = 0;  
         gbc.gridy = selectedOption+6;  
@@ -220,6 +205,11 @@ public class Main {
         String[] rowData = new String[model.getColumnCount()];
         for (int i = 0; i < rowData.length; i++) {
             rowData[i] = JOptionPane.showInputDialog("Enter data for " + model.getColumnName(i));
+            System.out.println("Is null? " + rowData[i]);
+            while (rowData[i] == null || rowData[i].isEmpty()) {
+                System.out.println("Still null " + rowData[i]);
+                rowData[i] = JOptionPane.showInputDialog("Cannot be null. Enter data for " + model.getColumnName(i));
+            }
         }
         // Add the new row to the table model
         model.addRow(rowData);

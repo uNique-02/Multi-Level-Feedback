@@ -58,21 +58,24 @@ public class SRTF {
                   currentTime.incrementAndGet();
 
                   Random random = new Random();
-                        Color color = color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+                  Color color = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+                  if (current.remainingTime == 0) {
+                    System.out.println("Process " + current.getId() + " completed at time " + currentTime.get());
+                    completed++;
+                    Color newcolor = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
+                    color = newcolor;
+                }
                         JPanel box = new JPanel();
                         JLabel label = new JLabel("" + (current.getId()));
+                        label.setFont(label.getFont().deriveFont((float) 9));
                         box.setLayout(new BorderLayout());
                         box.add(label, BorderLayout.CENTER);
-                        box.setPreferredSize(new Dimension(12, 30));
+                        box.setPreferredSize(new Dimension(14, 30));
                         box.setBorder(BorderFactory.createLineBorder(color));
                         box.setBackground(color);
                         boxPanel.add(box); // Add the box to the panel
                         boxPanel.revalidate(); // Revalidate the panel to reflect the changes
                   // Process is completed
-                  if (current.remainingTime == 0) {
-                      System.out.println("Process " + current.getId() + " completed at time " + currentTime.get());
-                      completed++;
-                  }
               }
   
               // Check if all processes are completed
