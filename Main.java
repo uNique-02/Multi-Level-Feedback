@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.Queue;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -18,6 +20,7 @@ public class Main {
     static int selectedOption;
     static ArrayList<JComboBox> comboBoxesList = new ArrayList<>(); // List to track JComboBoxes
     static ArrayList<JSpinner> spinnerBoxesList = new ArrayList<>(); // List to track JComboBoxes
+    static Queues[] queue = new Queues[3];
 
 
     public static void main(String[] args) {
@@ -64,12 +67,12 @@ public class Main {
 
         JButton runBtn = new JButton("Run");
 
-        String[] queueOptions = {"1", "2", "3"};
+        String[] queueOptions = {"0", "1", "2", "3"};
 
         // Create a JComboBox with the options array
         JComboBox<String> numberofQueues = new JComboBox<>(queueOptions);
         numberofQueues.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0,10,10,10), "Number of Queues"));
-
+        numberofQueues.setSelectedIndex(0);
 
 
         GridBagLayout grid = new GridBagLayout();  
@@ -109,19 +112,38 @@ public class Main {
             spinnerBox = new JSpinner[selectedOption];
 
             for (int i = 0; i < selectedOption; i++) {
+                
+                //queue[i] = new Queues();
 
                 gbc.insets = new Insets(5, 10, 5, 10); 
-                
+
                 // Create a SpinnerModel to define the range and initial value
-        SpinnerModel spinnerModel = new SpinnerNumberModel(0, // initial value
-        0, // minimum value
-        20, // maximum value
-        1); // step size
+                SpinnerModel spinnerModel = new SpinnerNumberModel(0, // initial value
+                0, // minimum value
+                20, // maximum value
+                1); // step size
 
                 algoBox[i] = util.createBox();
                 spinnerBox[i] = new JSpinner(spinnerModel);
+                final int index = i;
+
+                queue[i] = new Queues();
+
+                algoBox[i].addActionListener(event -> {
+                    JComboBox comboBox = (JComboBox) event.getSource();
+                    QueueOptions selectedAlgo = (QueueOptions) comboBox.getSelectedItem();
+                    queue[index].setQueueOptions(selectedAlgo);
+                }); 
 
                 comboBoxesList.add(algoBox[i]);
+                
+                spinnerBox[i].addChangeListener(event -> {
+                    JSpinner source = (JSpinner) event.getSource();
+                    int value = (int) source.getValue();
+                    queue[index] .setTimeQuantum(value);
+                    queue[index].setPriority(index);
+
+                });
                 spinnerBoxesList.add(spinnerBox[i]);
                 
                 gbc.gridx = 0;

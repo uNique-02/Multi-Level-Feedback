@@ -34,11 +34,12 @@ public class ProcessModel {
 
     public int remainingTime;
 
-    public ProcessModel (int id, int arrivalTime, int burstTime, int priority) {
+    public ProcessModel (int id, int arrivalTime, int burstTime, int priority, int remainingTime) {
         this.id = id;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.priority = priority;
         this.remainingTime = burstTime;
+        this.remainingTime = remainingTime;
     }
 }

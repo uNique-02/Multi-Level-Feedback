@@ -1,6 +1,6 @@
 package model;
 
-public class Queue {
+public class Queues {
     private QueueOptions queueOptions;
     private int timeQuantum;
     private int priority; 
