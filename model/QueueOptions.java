@@ -1,0 +1,9 @@
+package model;
+
+public enum QueueOptions {
+    FIRST_COME_FIRST_SERVE,
+    SHORTEST_JOB_FIRST,
+    SHORTEST_REMAINING_TIME_FIRST,
+    ROUND_ROBIN,
+    PRIORITY_SCHEDULER;
+}

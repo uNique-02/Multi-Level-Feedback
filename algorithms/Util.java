@@ -7,6 +7,8 @@ import javax.swing.JLabel;
 import javax.swing.table.DefaultTableModel;
 
 import model.ProcessModel;
+import model.Queue;
+import model.QueueOptions;
 
 import java.util.ArrayList;
 
@@ -47,7 +49,7 @@ public class Util {
     public JComboBox createBox(){
         final String algos[] = {"First Come First Serve", "Shortest Job First", "Shortest Remaining Time First", "Round-Robin", "Priority Scheduler", ""};
 
-        JComboBox algoBox = new JComboBox(algos); 
+        JComboBox algoBox = new JComboBox(QueueOptions.values()); 
         algoBox.setSelectedIndex(0);
         algoBox.setEditable(false);
         return algoBox;

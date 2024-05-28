@@ -13,9 +13,11 @@ import model.*;
 public class Main {
     static Util util = new Util();
     static ProcessModel processes[];
+    static JSpinner spinnerBox[];
     static JComboBox algoBox[];
     static int selectedOption;
     static ArrayList<JComboBox> comboBoxesList = new ArrayList<>(); // List to track JComboBoxes
+    static ArrayList<JSpinner> spinnerBoxesList = new ArrayList<>(); // List to track JComboBoxes
 
 
     public static void main(String[] args) {
@@ -28,12 +30,13 @@ public class Main {
         algoBox.setSelectedIndex(0);
         return algoBox;
     }
+
     public static void initComponents() {
         JFrame frame = new JFrame("Process Table");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout(20, 10));
 
-        String[] columns = {"Process", "Arrival Time", "Burst Time"};
+        String[] columns = {"Process", "Arrival Time", "CPU Burst Time", "Priority"};
         Object[][] data = {};
 
         DefaultTableModel model = new DefaultTableModel(data, columns);
@@ -41,7 +44,7 @@ public class Main {
 
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
-        panel.setBounds(50, 20, 400, 200);
+        panel.setBounds(50, 20, 600, 200);
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(panel.getWidth(), panel.getHeight()));
@@ -67,6 +70,8 @@ public class Main {
         JComboBox<String> numberofQueues = new JComboBox<>(queueOptions);
         numberofQueues.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(0,10,10,10), "Number of Queues"));
 
+
+
         GridBagLayout grid = new GridBagLayout();  
         GridBagConstraints gbc = new GridBagConstraints();  
         btnPanel.setLayout(grid);     
@@ -75,8 +80,11 @@ public class Main {
 
         gbc.gridx = 0;  
         gbc.gridy = 0;
-        gbc.gridwidth = 3;  
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.gridwidth = GridBagConstraints.REMAINDER; 
         btnPanel.add(numberofQueues, gbc);
+
+        comboBoxesList.add(util.createBox());
 
          // ActionListener for numberofQueues
          numberofQueues.addActionListener(e -> {
@@ -87,17 +95,50 @@ public class Main {
             for (JComboBox box : comboBoxesList) {
                 btnPanel.remove(box);
             }
+
+            // Remove all comboBoxes from the panel and list
+            for (JSpinner spinner : spinnerBoxesList) {
+                btnPanel.remove(spinner);
+            }
+
             comboBoxesList.clear(); // Clear the list of comboBoxes
+            spinnerBoxesList.clear(); // Clear the list of spinnerBoxes
 
             // Add new comboBoxes based on the selected option
             algoBox = new JComboBox[selectedOption];
+            spinnerBox = new JSpinner[selectedOption];
+
             for (int i = 0; i < selectedOption; i++) {
+
+                gbc.insets = new Insets(5, 10, 5, 10); 
+                
+                // Create a SpinnerModel to define the range and initial value
+        SpinnerModel spinnerModel = new SpinnerNumberModel(0, // initial value
+        0, // minimum value
+        20, // maximum value
+        1); // step size
+
                 algoBox[i] = util.createBox();
+                spinnerBox[i] = new JSpinner(spinnerModel);
+
                 comboBoxesList.add(algoBox[i]);
+                spinnerBoxesList.add(spinnerBox[i]);
                 
                 gbc.gridx = 0;
                 gbc.gridy = i + 1; // Adjust y position based on index
+                gbc.gridwidth = 2; // Take up the entire row
                 btnPanel.add(algoBox[i], gbc);
+
+                gbc.gridx = 2;
+                gbc.gridy = i + 1; // Adjust y position based on index
+                gbc.gridwidth = 2;
+                btnPanel.add(spinnerBox[i], gbc);
+
+                JLabel label = new JLabel("Time Quantum");
+                gbc.gridx = 3;
+                gbc.gridwidth = 2;
+                gbc.insets = new Insets(5, 0, 5, 10); 
+                btnPanel.add(label, gbc);
             }
 
             // Revalidate and repaint the panel
