@@ -235,7 +235,10 @@ public class Main {
                         new FCFS (boxPanel, processes);
                         break;
                     case 1:
-                        new SJF (boxPanel, processes);
+                        //no UI, for testing palang kay naglilipong ak ha UI HAHAHA
+                        SJF sjf = new SJF();
+                        sjf.schedule();
+                        scheduler.printSchedule();
                         break;
                     case 2:
                         new SRTF (boxPanel, processes);
