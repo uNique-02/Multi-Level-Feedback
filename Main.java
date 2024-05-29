@@ -125,6 +125,7 @@ public class Main {
 
                 algoBox[i] = util.createBox();
                 spinnerBox[i] = new JSpinner(spinnerModel);
+                spinnerBox[i].setEnabled(false);
                 final int index = i;
 
                 queue[i] = new Queues();
@@ -132,6 +133,11 @@ public class Main {
                 algoBox[i].addActionListener(event -> {
                     JComboBox comboBox = (JComboBox) event.getSource();
                     QueueOptions selectedAlgo = (QueueOptions) comboBox.getSelectedItem();
+                    if (selectedAlgo == QueueOptions.ROUND_ROBIN) {
+                        spinnerBox[index].setEnabled(true);
+                    } else {
+                        spinnerBox[index].setEnabled(false);
+                    }
                     queue[index].setQueueOptions(selectedAlgo);
                 }); 
 
